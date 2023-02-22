@@ -12,7 +12,9 @@ import {
 } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { StoriesComponent } from '../../components/storiesComponent';
+import { TopBoxComponent } from '../../components/topBoxComponent';
 import { storiesData } from '../../donnee/storiesData';
+import { topBoxData } from '../../donnee/topBoxData';
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -21,11 +23,23 @@ const windowHeight = Dimensions.get("window").height;
 const HomeScreen = () => {
 
 
-  const renderItems = ({ item }) => {
+  const renderItemStories = ({ item }) => {
     return (
       <StoriesComponent
           nomEvenement={item.nomEvenement}
           image={item.image}
+        />
+
+    )
+  }
+
+  const renderItemTopBox = ({ item }) => {
+    return (
+      <TopBoxComponent
+          nomEvenement={item.nomEvenement}
+          image={item.image}
+          note={item.note}
+          prix={item.prix}
         />
 
     )
@@ -52,7 +66,10 @@ const HomeScreen = () => {
           />
         </View>
         <View style={styles.headerView}>
-            <Text style={[styles.headerViewText, {fontWeight: "bold"}]}>Scan Me</Text>
+          <Image
+            style={{  width: 100, height: 100, resizeMode:'contain', alignSelf: "center" }}
+            source={require("../../assets/logo.png")}
+          />
         </View>
         <View style={styles.headerView}>
           <Icon
@@ -73,10 +90,22 @@ const HomeScreen = () => {
           horizontal={true}
           data={storiesData}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItems}
+          renderItem={renderItemStories}
         />
       </View>
       {/* stories View end  */}
+      {/* top 10 box start  */}
+      <View style={styles.topBox}>
+        <Text style={{color: "#717c82"}}>Top 10</Text>
+        <FlatList
+          style={{}}
+          horizontal={true}
+          data={topBoxData}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItemTopBox}
+        />
+      </View>
+      {/* top 10 box end  */}
     </SafeAreaView>
   );
 };
@@ -105,6 +134,9 @@ const styles = StyleSheet.create({
     },
     storiesView: {
       margin: 10,
+    },
+    topBox: {
+      margin: 10
     }
 
 });
