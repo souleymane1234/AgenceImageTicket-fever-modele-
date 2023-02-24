@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, Dimensions } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height/3;
+const windowHeight = Dimensions.get("window").height/3.2;
 
 export const TopBoxComponent = (props) => {
   return (
