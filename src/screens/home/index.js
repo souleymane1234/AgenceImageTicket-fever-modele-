@@ -9,7 +9,8 @@ import {
   Dimensions,
   Image,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableHighlight
 } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { StoriesComponent } from '../../components/storiesComponent';
@@ -21,6 +22,7 @@ import { BottomBarComponent } from '../../components/bottomBar';
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+const heightVideo = Dimensions.get("window").height/2.6
 
 
 const HomeScreen = ({ navigation }) => {
@@ -30,7 +32,7 @@ const HomeScreen = ({ navigation }) => {
   const [sport, setSport] = useState(false);
   const [profil, setProfil] = useState(false);
 
-    const BottomBar = (
+  const BottomBar = (
     <View
       style={{
         height: 50,
@@ -72,7 +74,6 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => {
               setHome(true);
-              navigation.navigate("HomeScreen")
               setEvenement(false);
               setCinema(false);
               setSport(false);
@@ -115,7 +116,6 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => {
               setHome(false);
               setEvenement(true);
-              navigation.navigate("EvenementScreen")
               setCinema(false);
               setSport(false);
               setProfil(false);
@@ -157,7 +157,6 @@ const HomeScreen = ({ navigation }) => {
               setEvenement(false);
               setCinema(false);
               setSport(true);
-              navigation.navigate("SportScreen")
               setProfil(false);
             }}
           >
@@ -196,7 +195,6 @@ const HomeScreen = ({ navigation }) => {
               setHome(false);
               setEvenement(false);
               setCinema(true);
-              navigation.navigate("CinemaScreen")
               setSport(false);
               setProfil(false);
             }}
@@ -239,7 +237,6 @@ const HomeScreen = ({ navigation }) => {
               setCinema(false);
               setSport(false);
               setProfil(true);
-              navigation.navigate("ProfilScreen")
             }}
           >
             <Icon
@@ -268,15 +265,219 @@ const HomeScreen = ({ navigation }) => {
 
   const renderItemTopBox = ({ item }) => {
     return (
+      <TouchableHighlight onPress={() =>
+          navigation.navigate("DetailEvenement")
+        }
+        underlayColor="none"
+        >
       <TopBoxComponent
           nomEvenement={item.nomEvenement}
           image={item.image}
           note={item.note}
           prix={item.prix}
         />
+      </TouchableHighlight>
 
     )
   }
+  const Home = (
+    <View style={{height: windowHeight, width: windowWidth}}>
+      <ScrollView>
+        {/* stories View start  */}
+        <View style={styles.storiesView}>
+          <Text style={{color: "#717c82"}}>EN VEDETTE</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={storiesData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemStories}
+          />
+        </View>
+        {/* stories View end  */}
+        {/* top 10 box start  */}
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82"}}>Top 10</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={topBoxData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+        {/* top 10 box end  */}
+        <View style={{margin: 10}}>
+          <View style={{ backgroundColor: "#374550",  borderRadius: 5, margin: 10, height: heightVideo}}>
+            <VideoPlayer
+              video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+              videoWidth={1600}
+              videoHeight={900}
+              autoplay= {true}
+              thumbnail={{ uri: 'https://cdn.cloudflare.steamstatic.com/steam/apps/601050/capsule_616x353.jpg?t=1673507900' }}
+            />
+        <View style={{margin: 10}}>
+            <Text style={{color: "#fff"}}>
+                props.nomEvenement
+            </Text>
+        </View>
+        <View style={{flexDirection: "row", justifyContent: "space-between", margin: 10}}>
+            <Text style={{color: "#f2cb5e"}}>
+                props.note
+            </Text>
+            <Text style={{color: "#fff"}}>
+                props.prix
+            </Text>
+        </View>
+
+          </View>
+        </View>
+        {/* top 10 évenements start  */}
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82"}}>Les meilleurs évenements</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={topBoxData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+        {/* top 10 évenements end  */}
+        {/* top 10 films start  */}
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82"}}>Les vrais films</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={topBoxData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+        {/* top 10 films end  */}
+        {/* top 10 sports start  */}
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82"}}>Tous les sports</Text>
+          <FlatList
+            style={{marginBottom: 120}}
+            horizontal={true}
+            data={topBoxData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+        {/* top 10 sports end  */}
+      </ScrollView>
+    </View>
+  );
+
+  const Evenement = (
+    <SafeAreaView style={{height: windowHeight, width: windowWidth}}>
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82", fontSize: 18}}>Vos meilleurs evenements</Text>
+          <FlatList
+            style={{marginBottom: 150}}
+            data={topBoxData}
+            numColumns={2}
+            keyExtractor={(item, index) => item.id}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+    </SafeAreaView>
+  );
+
+  const Sport = (
+    <View style={{height: windowHeight, width: windowWidth}}>
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82", fontSize: 18}}>Les plus grandes compétitions</Text>
+          <FlatList
+            style={{marginBottom: 150}}
+            data={topBoxData}
+            numColumns={2}
+            keyExtractor={(item, index) => item.id}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+    </View>
+  );
+
+  const Cinema = (
+    <View style={{height: windowHeight, width: windowWidth}}>
+        <View style={styles.topBox}>
+          <Text style={{color: "#717c82", fontSize: 18}}>les meilleurs films</Text>
+          <FlatList
+            style={{marginBottom: 150}}
+            data={topBoxData}
+            numColumns={2}
+            keyExtractor={(item, index) => item.id}
+            renderItem={renderItemTopBox}
+          />
+        </View>
+    </View>
+  );
+
+  const Profil = (
+    <View style={{height: windowHeight, width: windowWidth}}>
+      <View style={{flexDirection: "row", justifyContent: "space-between", margin: 10}}>
+        <View>
+            <Image
+                style={{ borderRadius: 60, width: 80, height: 80, resizeMode:'contain' }}
+                source={require("../../assets/imgConcert1.jpeg")}
+            />
+        </View>
+        <View style={{justifyContent: "center"}}>
+            <Text style={{color: "#fff"}}>Konate souleymane</Text>
+            <Text style={{color: "#fff"}}>Konate souleymane</Text>
+        </View>
+        <View style={{justifyContent: "center"}}>
+            <Icon
+              size={25}
+              color="#fff"
+              name="account-cog"
+              pack="material"
+              style={{alignSelf: "center"}}
+            />
+        </View>
+      </View>
+      <View style={{margin: 10}}>
+        <Text style={{color: "#fff", fontWeight: "bold", fontSize: 16}}>Personnel</Text>
+      </View>
+      {/* box 1 start */}
+      <TouchableOpacity style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
+        <View style={{justifyContent: "center", margin: 10}}>
+            <Icon
+              size={25}
+              color="#fff"
+              name="account-cog"
+              pack="material"
+              style={{alignSelf: "center"}}
+            />
+        </View>
+        <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+            <Text style={{color: "#fff", fontWeight: "bold", fontSize: 18, marginBottom: 5}}>Lyon</Text>
+            <Text style={{color: "#717c82"}}>Changer de ville</Text>
+        </View>
+      </TouchableOpacity>
+      {/* box 1 end */}
+            {/* box 1 start */}
+      <TouchableOpacity style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
+        <View style={{justifyContent: "center", margin: 10}}>
+            <Icon
+              size={25}
+              color="#fff"
+              name="account-cog"
+              pack="material"
+              style={{alignSelf: "center"}}
+            />
+        </View>
+        <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+            <Text style={{color: "#fff", fontWeight: "bold", fontSize: 18, marginBottom: 5}}>Tickets</Text>
+            <Text style={{color: "#717c82"}}>Tous tes tickets achetés</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor="#12222e" />
@@ -315,78 +516,28 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
       {/* header end  */}
-      <ScrollView>
-        {/* stories View start  */}
-        <View style={styles.storiesView}>
-          <Text style={{color: "#717c82"}}>EN VEDETTE</Text>
-          <FlatList
-            style={{}}
-            horizontal={true}
-            data={storiesData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemStories}
-          />
+        <View style={{ height: windowHeight }}>
+        {home && Home}
+        <View style={{}}>
+          <View
+            style={[
+              {
+                backgroundColor: null,
+                borderRadius: null,
+                width: windowWidth,
+                height: windowHeight,
+              },
+            ]}
+          >
+            {evenement && Evenement}
+            {sport && Sport}
+            {cinema && Cinema}
+            {profil && Profil}
+          </View>
         </View>
-        {/* stories View end  */}
-        {/* top 10 box start  */}
-        <View style={styles.topBox}>
-          <Text style={{color: "#717c82"}}>Top 10</Text>
-          <FlatList
-            style={{}}
-            horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
-          />
-        </View>
-        {/* top 10 box end  */}
-        <View style={{margin: 10}}>
-          <VideoPlayer
-              video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
-              videoWidth={1600}
-              videoHeight={900}
-              autoplay= {true}
-              thumbnail={{ uri: 'https://cdn.cloudflare.steamstatic.com/steam/apps/601050/capsule_616x353.jpg?t=1673507900' }}
-          />
-        </View>
-        {/* top 10 évenements start  */}
-        <View style={styles.topBox}>
-          <Text style={{color: "#717c82"}}>Les meilleurs évenements</Text>
-          <FlatList
-            style={{}}
-            horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
-          />
-        </View>
-        {/* top 10 évenements end  */}
-        {/* top 10 films start  */}
-        <View style={styles.topBox}>
-          <Text style={{color: "#717c82"}}>Les vrais films</Text>
-          <FlatList
-            style={{}}
-            horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
-          />
-        </View>
-        {/* top 10 films end  */}
-        {/* top 10 sports start  */}
-        <View style={styles.topBox}>
-          <Text style={{color: "#717c82"}}>Tous les sports</Text>
-          <FlatList
-            style={{marginBottom: 50}}
-            horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
-          />
-        </View>
-        {/* top 10 sports end  */}
-      </ScrollView>
-      <BottomBarComponent/>
+        
+      </View>
+      {BottomBar}
 
     </SafeAreaView>
   );
@@ -438,7 +589,7 @@ const styles = StyleSheet.create({
     topBox: {
       margin: 10
     },
-      backgroundVideo: {
+    backgroundVideo: {
     position: 'absolute',
     top: 0,
     left: 0,

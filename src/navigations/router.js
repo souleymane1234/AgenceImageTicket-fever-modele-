@@ -7,6 +7,7 @@ import EvenementScreen from "../screens/evenement";
 import SportScreen from "../screens/sport";
 import CinemaScreen from "../screens/cinema";
 import ProfilScreen from "../screens/profil";
+import DetailEvenement from "../screens/detailEvenement";
 
 
 const Stack = createNativeStackNavigator();
@@ -46,6 +47,13 @@ const Router = (props) => {
         <Stack.Screen
           name={"ProfilScreen"}
           component={ProfilScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={"DetailEvenement"}
+          component={DetailEvenement}
           options={{
             headerShown: false,
           }}
