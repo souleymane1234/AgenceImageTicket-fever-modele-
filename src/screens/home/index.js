@@ -10,7 +10,10 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  TouchableHighlight
+  TouchableHighlight,
+  Modal,
+  Pressable,
+  Alert
 } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { StoriesComponent } from '../../components/storiesComponent';
@@ -23,6 +26,7 @@ import { BottomBarComponent } from '../../components/bottomBar';
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 const heightVideo = Dimensions.get("window").height/2.6
+const heightStotiesVideo = Dimensions.get("window").height/1.2
 
 
 const HomeScreen = ({ navigation }) => {
@@ -31,6 +35,7 @@ const HomeScreen = ({ navigation }) => {
   const [cinema, setCinema] = useState(false);
   const [sport, setSport] = useState(false);
   const [profil, setProfil] = useState(false);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const BottomBar = (
     <View
@@ -255,10 +260,15 @@ const HomeScreen = ({ navigation }) => {
 
   const renderItemStories = ({ item }) => {
     return (
+      <TouchableHighlight
+        onPress={() => setModalVisible(true)}
+        underlayColor="none"
+        >
       <StoriesComponent
           nomEvenement={item.nomEvenement}
           image={item.image}
         />
+      </TouchableHighlight>
 
     )
   }
@@ -285,7 +295,7 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView>
         {/* stories View start  */}
         <View style={styles.storiesView}>
-          <Text style={{color: "#717c82"}}>EN VEDETTE</Text>
+          <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
           <FlatList
             style={{}}
             horizontal={true}
@@ -310,11 +320,12 @@ const HomeScreen = ({ navigation }) => {
         <View style={{margin: 10}}>
           <View style={{ backgroundColor: "#374550",  borderRadius: 5, margin: 10, height: heightVideo}}>
             <VideoPlayer
-              video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+              video={{ uri: 'https://www.bandes-annonces.fr/svideo/ca81aa59b4e15c11437e9eb87e19ad97/64008f18/2667566/41467866_iphone.mp4' }}
               videoWidth={1600}
               videoHeight={900}
               autoplay= {true}
-              thumbnail={{ uri: 'https://cdn.cloudflare.steamstatic.com/steam/apps/601050/capsule_616x353.jpg?t=1673507900' }}
+              loop={true}
+              thumbnail={{ uri: 'https://i.ytimg.com/vi/wDg7wNchG2o/maxresdefault.jpg' }}
             />
         <View style={{margin: 10}}>
             <Text style={{color: "#fff"}}>
@@ -485,13 +496,6 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.header}>
         <View style={[styles.headerView, {flexDirection: "row", justifyContent: "space-between"}]}>
           <Icon
-            style={{ alignSelf: "center" }}
-            name="heart-outline"
-            pack="material"
-            size={20}
-            color={"#fff"}
-          />
-          <Icon
             style={{ alignSelf: "center", marginHorizontal: 5 }}
             name="bookmark-multiple-outline"
             pack="material"
@@ -502,7 +506,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.headerView}>
           <Image
             style={{  width: 100, height: 100, resizeMode:'contain', alignSelf: "center" }}
-            source={require("../../assets/logo.png")}
+            source={require("../../assets/logo-scan.png")}
           />
         </View>
         <View style={styles.headerView}>
@@ -538,6 +542,32 @@ const HomeScreen = ({ navigation }) => {
         
       </View>
       {BottomBar}
+            <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+              <VideoPlayer
+              video={{ uri: 'https://www.bandes-annonces.fr/svideo/ca81aa59b4e15c11437e9eb87e19ad97/64008f18/2667566/41467866_iphone.mp4' }}
+              // videoWidth={2600}
+              // videoHeight={900}
+              style={{width: windowWidth, height: heightStotiesVideo}}
+              resizeMode= "cover"
+              autoplay= {true}
+              endThumbnail={{ uri: 'https://i.ytimg.com/vi/wDg7wNchG2o/maxresdefault.jpg' }}
+            />
+            <TouchableOpacity style={{backgroundColor: "#53c6ea", height: 50, width: 150, alignItems: "center", justifyContent: "center", borderRadius: 10, top: "3%"}}>
+              <Text style={{color: "#fff", fontWeight: "bold", fontSize: 16}}>Détails</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
     </SafeAreaView>
   );
@@ -595,6 +625,23 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
+  },
+  // centeredView: {
+  //   backgroundColor: "yellow"
+  // },
+    modalView: {
+    backgroundColor: "#12222e",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: windowWidth,
+    height: windowHeight
   },
 
 });
