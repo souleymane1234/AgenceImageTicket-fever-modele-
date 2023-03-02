@@ -402,6 +402,19 @@ const HomeScreen = ({ navigation }) => {
 
   const Evenement = (
     <SafeAreaView style={{height: windowHeight, width: windowWidth}}>
+      <ScrollView>
+      {/* stories View start  */}
+        <View style={styles.storiesView}>
+          <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={storiesData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemStories}
+          />
+        </View>
+        {/* stories View end  */}
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>Vos meilleurs evenements</Text>
           <FlatList
@@ -412,11 +425,25 @@ const HomeScreen = ({ navigation }) => {
             renderItem={renderItemTopBox}
           />
         </View>
+        </ScrollView>
     </SafeAreaView>
   );
 
   const Sport = (
     <View style={{height: windowHeight, width: windowWidth}}>
+      <ScrollView>
+        {/* stories View start  */}
+        <View style={styles.storiesView}>
+          <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={storiesData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemStories}
+          />
+        </View>
+        {/* stories View end  */}
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>Les plus grandes compétitions</Text>
           <FlatList
@@ -427,12 +454,25 @@ const HomeScreen = ({ navigation }) => {
             renderItem={renderItemTopBox}
           />
         </View>
+         </ScrollView>
     </View>
   );
 
   const Cinema = (
     <View style={{height: windowHeight, width: windowWidth}}>
       <ScrollView>
+      {/* stories View start  */}
+        <View style={styles.storiesView}>
+          <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
+          <FlatList
+            style={{}}
+            horizontal={true}
+            data={storiesData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItemStories}
+          />
+        </View>
+        {/* stories View end  */}
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>les meilleurs films</Text>
           {/* bande d'annonce start  */}
