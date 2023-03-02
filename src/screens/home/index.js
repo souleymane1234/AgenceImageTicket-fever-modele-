@@ -13,7 +13,9 @@ import {
   TouchableHighlight,
   Modal,
   Pressable,
-  Alert
+  Alert,
+  Share,
+
 } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { StoriesComponent } from '../../components/storiesComponent';
@@ -149,7 +151,7 @@ const HomeScreen = ({ navigation }) => {
           >
             <Icon
               size={25}
-              name="theater"
+              name="basketball"
               pack="material"
               style={styles.bottomBarIconActif}
             />
@@ -167,7 +169,7 @@ const HomeScreen = ({ navigation }) => {
           >
             <Icon
               size={25}
-              name="theater"
+              name="basketball"
               pack="material"
               style={styles.bottomBarIconNoActif}
             />
@@ -188,7 +190,7 @@ const HomeScreen = ({ navigation }) => {
           >
             <Icon
               size={25}
-              name="theater"
+              name="video-vintage"
               pack="material"
               style={styles.bottomBarIconActif}
             />
@@ -206,7 +208,7 @@ const HomeScreen = ({ navigation }) => {
           >
             <Icon
               size={25}
-              name="theater"
+              name="video-vintage"
               pack="material"
               style={styles.bottomBarIconNoActif}
             />
@@ -257,6 +259,27 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 
+  // share function 
+    const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          "je suis heureux de vous partager l'application"
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
 
   const renderItemStories = ({ item }) => {
     return (
@@ -267,6 +290,7 @@ const HomeScreen = ({ navigation }) => {
       <StoriesComponent
           nomEvenement={item.nomEvenement}
           image={item.image}
+          color={item.color}
         />
       </TouchableHighlight>
 
@@ -318,26 +342,19 @@ const HomeScreen = ({ navigation }) => {
         </View>
         {/* top 10 box end  */}
         <View style={{margin: 10}}>
-          <View style={{ backgroundColor: "#374550",  borderRadius: 5, margin: 10, height: heightVideo}}>
+          <View style={{ backgroundColor: "#fff",  borderRadius: 5, margin: 10, height: heightVideo}}>
             <VideoPlayer
-              video={{ uri: 'https://www.bandes-annonces.fr/svideo/ca81aa59b4e15c11437e9eb87e19ad97/64008f18/2667566/41467866_iphone.mp4' }}
+              video={{ uri: 'https://www.bandes-annonces.fr?preaction=load_iphone_video&v=2693324&f=41867748_iphone.mp4' }}
               videoWidth={1600}
               videoHeight={900}
               autoplay= {true}
               loop={true}
-              thumbnail={{ uri: 'https://i.ytimg.com/vi/wDg7wNchG2o/maxresdefault.jpg' }}
+              repeat={true}
+              thumbnail={{ uri: 'https://imgsrc.cineserie.com/2023/01/andre-dussolier-et-alex-lutz-en-plein-feu-apollo-films-e1674743737946.jpg?ver=1' }}
             />
         <View style={{margin: 10}}>
-            <Text style={{color: "#fff"}}>
-                props.nomEvenement
-            </Text>
-        </View>
-        <View style={{flexDirection: "row", justifyContent: "space-between", margin: 10}}>
-            <Text style={{color: "#f2cb5e"}}>
-                props.note
-            </Text>
-            <Text style={{color: "#fff"}}>
-                props.prix
+            <Text style={{color: "#53c6ea", textAlign: "center", fontSize: 16, fontWeight: "bold"}}>
+                EN PLEIN FEU: avec André Dussollier et Alex Lutz
             </Text>
         </View>
 
@@ -415,8 +432,29 @@ const HomeScreen = ({ navigation }) => {
 
   const Cinema = (
     <View style={{height: windowHeight, width: windowWidth}}>
+      <ScrollView>
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>les meilleurs films</Text>
+          {/* bande d'annonce start  */}
+          <View style={{margin: 10}}>
+            <View style={{ backgroundColor: "#fff",  borderRadius: 5, margin: 10, height: heightVideo}}>
+              <VideoPlayer
+                video={{ uri: 'https://www.bandes-annonces.fr?preaction=load_iphone_video&v=2693324&f=41867748_iphone.mp4' }}
+                videoWidth={1600}
+                videoHeight={900}
+                autoplay= {true}
+                loop={true}
+                repeat={true}
+                thumbnail={{ uri: 'https://imgsrc.cineserie.com/2023/01/andre-dussolier-et-alex-lutz-en-plein-feu-apollo-films-e1674743737946.jpg?ver=1' }}
+                />
+            <View style={{margin: 10}}>
+                <Text style={{color: "#53c6ea", textAlign: "center", fontSize: 16, fontWeight: "bold"}}>
+                    EN PLEIN FEU: avec André Dussollier et Alex Lutz
+                </Text>
+            </View>
+          </View>
+        </View>
+        {/* bande d'annonce end  */}
           <FlatList
             style={{marginBottom: 150}}
             data={topBoxData}
@@ -425,6 +463,7 @@ const HomeScreen = ({ navigation }) => {
             renderItem={renderItemTopBox}
           />
         </View>
+        </ScrollView>
     </View>
   );
 
@@ -438,8 +477,9 @@ const HomeScreen = ({ navigation }) => {
             />
         </View>
         <View style={{justifyContent: "center"}}>
-            <Text style={{color: "#fff"}}>Konate souleymane</Text>
-            <Text style={{color: "#fff"}}>Konate souleymane</Text>
+            <Text style={{color: "#fff"}}>Koffi Franck</Text>
+            <Text style={{color: "#fff"}}>Koffi@gmail.com</Text>
+            <Text style={{color: "#fff"}}>0102030405</Text>
         </View>
         <View style={{justifyContent: "center"}}>
             <Icon
@@ -460,24 +500,7 @@ const HomeScreen = ({ navigation }) => {
             <Icon
               size={25}
               color="#fff"
-              name="account-cog"
-              pack="material"
-              style={{alignSelf: "center"}}
-            />
-        </View>
-        <View style={{marginHorizontal: 20, justifyContent: "center"}}>
-            <Text style={{color: "#fff", fontWeight: "bold", fontSize: 18, marginBottom: 5}}>Lyon</Text>
-            <Text style={{color: "#717c82"}}>Changer de ville</Text>
-        </View>
-      </TouchableOpacity>
-      {/* box 1 end */}
-            {/* box 1 start */}
-      <TouchableOpacity style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
-        <View style={{justifyContent: "center", margin: 10}}>
-            <Icon
-              size={25}
-              color="#fff"
-              name="account-cog"
+              name="ticket-outline"
               pack="material"
               style={{alignSelf: "center"}}
             />
@@ -487,6 +510,23 @@ const HomeScreen = ({ navigation }) => {
             <Text style={{color: "#717c82"}}>Tous tes tickets achetés</Text>
         </View>
       </TouchableOpacity>
+      {/* box 1 end */}
+      {/* box 2 start */}
+      <TouchableOpacity style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
+        <View style={{justifyContent: "center", margin: 10}}>
+            <Icon
+              size={25}
+              color="#fff"
+              name="logout"
+              pack="material"
+              style={{alignSelf: "center"}}
+            />
+        </View>
+        <View style={{marginHorizontal: 20, justifyContent: "center"}}>
+            <Text style={{color: "#fff", fontWeight: "bold", fontSize: 18, marginBottom: 5}}>Déconnexion</Text>
+        </View>
+      </TouchableOpacity>
+      {/* box 2 end */}
     </View>
   );
   return (
@@ -494,15 +534,18 @@ const HomeScreen = ({ navigation }) => {
       <StatusBar animated={true} backgroundColor="#12222e" />
       {/* header start  */}
       <View style={styles.header}>
-        <View style={[styles.headerView, {flexDirection: "row", justifyContent: "space-between"}]}>
+        <TouchableOpacity 
+          onPress={() => onShare()}
+          style={[styles.headerView, {flexDirection: "row", justifyContent: "space-between"}]}
+          >
           <Icon
             style={{ alignSelf: "center", marginHorizontal: 5 }}
-            name="bookmark-multiple-outline"
+            name="share-variant-outline"
             pack="material"
-            size={20}
+            size={25}
             color={"#fff"}
           />
-        </View>
+        </TouchableOpacity>
         <View style={styles.headerView}>
           <Image
             style={{  width: 100, height: 100, resizeMode:'contain', alignSelf: "center" }}
@@ -512,9 +555,9 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.headerView}>
           <Icon
             style={{ alignSelf: "center" }}
-            name="wallet"
+            name="ticket-outline"
             pack="material"
-            size={20}
+            size={25}
             color={"#fff"}
           />
         </View>
@@ -554,15 +597,17 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
               <VideoPlayer
-              video={{ uri: 'https://www.bandes-annonces.fr/svideo/ca81aa59b4e15c11437e9eb87e19ad97/64008f18/2667566/41467866_iphone.mp4' }}
+              video={{ uri: 'https://www.bandes-annonces.fr?preaction=load_iphone_video&v=2693324&f=41867748_iphone.mp4' }}
               // videoWidth={2600}
               // videoHeight={900}
               style={{width: windowWidth, height: heightStotiesVideo}}
               resizeMode= "cover"
               autoplay= {true}
-              endThumbnail={{ uri: 'https://i.ytimg.com/vi/wDg7wNchG2o/maxresdefault.jpg' }}
+              endThumbnail={{ uri: 'https://imgsrc.cineserie.com/2023/01/andre-dussolier-et-alex-lutz-en-plein-feu-apollo-films-e1674743737946.jpg?ver=1' }}
             />
-            <TouchableOpacity style={{backgroundColor: "#53c6ea", height: 50, width: 150, alignItems: "center", justifyContent: "center", borderRadius: 10, top: "3%"}}>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate("DetailEvenement")}
+              style={{backgroundColor: "#53c6ea", height: 50, width: 150, alignItems: "center", justifyContent: "center", borderRadius: 10, top: "3%"}}>
               <Text style={{color: "#fff", fontWeight: "bold", fontSize: 16}}>Détails</Text>
             </TouchableOpacity>
           </View>
