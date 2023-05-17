@@ -8,6 +8,10 @@ import SportScreen from "../screens/sport";
 import CinemaScreen from "../screens/cinema";
 import ProfilScreen from "../screens/profil";
 import DetailEvenement from "../screens/detailEvenement";
+import Login from "../screens/login";
+import Register from "../screens/register";
+import MesTicketsCinema from "../screens/mesTicketsCinema";
+import MesTickets from "../screens/mesTickets";
 
 
 const Stack = createNativeStackNavigator();
@@ -15,7 +19,7 @@ const Stack = createNativeStackNavigator();
 const Router = (props) => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HomeScreen">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name={"HomeScreen"}
           component={HomeScreen}
@@ -54,6 +58,34 @@ const Router = (props) => {
         <Stack.Screen
           name={"DetailEvenement"}
           component={DetailEvenement}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={"Login"}
+          component={Login}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={"Register"}
+          component={Register}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={"MesTicketsCinema"}
+          component={MesTicketsCinema}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={"MesTickets"}
+          component={MesTickets}
           options={{
             headerShown: false,
           }}

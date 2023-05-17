@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -24,6 +24,8 @@ import { storiesData } from '../../donnee/storiesData';
 import { topBoxData } from '../../donnee/topBoxData';
 import VideoPlayer from 'react-native-video-player';
 import { BottomBarComponent } from '../../components/bottomBar';
+import OrientationLoadingOverlay from "react-native-orientation-loading-overlay";
+import { EventTemplate } from '../../components/testComponent';
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -31,13 +33,84 @@ const heightVideo = Dimensions.get("window").height/2.6
 const heightStotiesVideo = Dimensions.get("window").height/1.2
 
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
+  const { id, Token, Data } = route.params;
   const [home, setHome] = useState(true);
   const [evenement, setEvenement] = useState(false);
   const [cinema, setCinema] = useState(false);
   const [sport, setSport] = useState(false);
   const [profil, setProfil] = useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [AllCinema, setAllCinema] = useState();
+  const [AllEvent, setAllEvent] = useState();
+  const [AllSport, setAllSport] = useState();
+
+  //  console.log("data........", Data)
+// All cinema 
+  useEffect(() => {
+var myHeaders = new Headers();
+myHeaders.append("Cache-Control", "no-cache");
+myHeaders.append("Accept", "*/*");
+myHeaders.append("Accept-Encoding", "gzip, deflate");
+myHeaders.append("Connection", "keep-alive");
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch("https://pleasant-shirt-bass.cyclic.app/api/allCinema", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    setAllCinema(result)
+  })
+  .catch(error => console.log('error', error));
+}, [AllCinema])
+
+// All event 
+  useEffect(() => {
+var myHeaders = new Headers();
+myHeaders.append("Cache-Control", "no-cache");
+myHeaders.append("Accept", "*/*");
+myHeaders.append("Accept-Encoding", "gzip, deflate");
+myHeaders.append("Connection", "keep-alive");
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch("https://pleasant-shirt-bass.cyclic.app/api/allEvent", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    setAllEvent(result)
+  })
+  .catch(error => console.log('error', error));
+}, [AllEvent])
+
+// All sport
+  useEffect(() => {
+var myHeaders = new Headers();
+myHeaders.append("Cache-Control", "no-cache");
+myHeaders.append("Accept", "*/*");
+myHeaders.append("Accept-Encoding", "gzip, deflate");
+myHeaders.append("Connection", "keep-alive");
+
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch("https://pleasant-shirt-bass.cyclic.app/api/allSport", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    setAllSport(result)
+  })
+  .catch(error => console.log('error', error));
+}, [AllSport])
 
   const BottomBar = (
     <View
@@ -305,20 +378,65 @@ const HomeScreen = ({ navigation }) => {
         underlayColor="none"
         >
       <TopBoxComponent
-          nomEvenement={item.nomEvenement}
+          nom={item.nom}
           image={item.image}
-          note={item.note}
-          prix={item.prix}
+          prixStandart={item.prixStandart}
         />
       </TouchableHighlight>
 
     )
   }
+
+    const renderItemsTest = ({ item }) => {
+    return (
+      <TouchableHighlight onPress={() =>
+          navigation.navigate("DetailEvenement", {
+            idEvent: item._id,
+            DataEvent: item,
+            idUser: id
+          })
+        }
+        underlayColor="none"
+        >
+      <EventTemplate
+          DataEvent={item}
+          idEvent={item._id}
+          nom={item.nom}
+          image={item.image}
+          prixStandart={item.prixStandart}
+        />
+      </TouchableHighlight>
+
+    )
+  }
+  let Loader;
+  if (AllCinema) {
+    Loader = (
+      <OrientationLoadingOverlay
+        visible={false}
+        color="white"
+        indicatorSize="large"
+        messageFontSize={10}
+        message="Veillez patienter un moment!!"
+      />
+    );
+  } else {
+    Loader = (
+      <OrientationLoadingOverlay
+        visible={true}
+        color="white"
+        indicatorSize="large"
+        messageFontSize={10}
+        message="Veillez patienter un moment!!"
+      />
+    );
+  }
   const Home = (
     <View style={{height: windowHeight, width: windowWidth}}>
       <ScrollView>
+        {Loader}
         {/* stories View start  */}
-        <View style={styles.storiesView}>
+        {/* <View style={styles.storiesView}>
           <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
           <FlatList
             style={{}}
@@ -327,7 +445,7 @@ const HomeScreen = ({ navigation }) => {
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItemStories}
           />
-        </View>
+        </View> */}
         {/* stories View end  */}
         {/* top 10 box start  */}
         <View style={styles.topBox}>
@@ -335,9 +453,9 @@ const HomeScreen = ({ navigation }) => {
           <FlatList
             style={{}}
             horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
+            data={AllCinema}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={renderItemsTest}
           />
         </View>
         {/* top 10 box end  */}
@@ -366,9 +484,9 @@ const HomeScreen = ({ navigation }) => {
           <FlatList
             style={{}}
             horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
+            data={AllEvent}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={renderItemsTest}
           />
         </View>
         {/* top 10 évenements end  */}
@@ -378,9 +496,9 @@ const HomeScreen = ({ navigation }) => {
           <FlatList
             style={{}}
             horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
+            data={AllCinema}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={renderItemsTest}
           />
         </View>
         {/* top 10 films end  */}
@@ -390,9 +508,9 @@ const HomeScreen = ({ navigation }) => {
           <FlatList
             style={{marginBottom: 120}}
             horizontal={true}
-            data={topBoxData}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItemTopBox}
+            data={AllSport}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={renderItemsTest}
           />
         </View>
         {/* top 10 sports end  */}
@@ -404,7 +522,7 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={{height: windowHeight, width: windowWidth}}>
       <ScrollView>
       {/* stories View start  */}
-        <View style={styles.storiesView}>
+        {/* <View style={styles.storiesView}>
           <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
           <FlatList
             style={{}}
@@ -413,16 +531,16 @@ const HomeScreen = ({ navigation }) => {
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItemStories}
           />
-        </View>
+        </View> */}
         {/* stories View end  */}
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>Vos meilleurs evenements</Text>
           <FlatList
             style={{marginBottom: 150}}
-            data={topBoxData}
+            data={AllEvent}
             numColumns={2}
-            keyExtractor={(item, index) => item.id}
-            renderItem={renderItemTopBox}
+            keyExtractor={(item, index) => item._id}
+            renderItem={renderItemsTest}
           />
         </View>
         </ScrollView>
@@ -433,7 +551,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={{height: windowHeight, width: windowWidth}}>
       <ScrollView>
         {/* stories View start  */}
-        <View style={styles.storiesView}>
+        {/* <View style={styles.storiesView}>
           <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
           <FlatList
             style={{}}
@@ -442,16 +560,16 @@ const HomeScreen = ({ navigation }) => {
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItemStories}
           />
-        </View>
+        </View> */}
         {/* stories View end  */}
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>Les plus grandes compétitions</Text>
           <FlatList
             style={{marginBottom: 150}}
-            data={topBoxData}
+            data={AllSport}
             numColumns={2}
-            keyExtractor={(item, index) => item.id}
-            renderItem={renderItemTopBox}
+            keyExtractor={(item, index) => item._id}
+            renderItem={renderItemsTest}
           />
         </View>
          </ScrollView>
@@ -462,7 +580,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={{height: windowHeight, width: windowWidth}}>
       <ScrollView>
       {/* stories View start  */}
-        <View style={styles.storiesView}>
+        {/* <View style={styles.storiesView}>
           <Text style={{color: "#717c82", marginBottom: 10}}>EN VEDETTE</Text>
           <FlatList
             style={{}}
@@ -471,7 +589,7 @@ const HomeScreen = ({ navigation }) => {
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItemStories}
           />
-        </View>
+        </View> */}
         {/* stories View end  */}
         <View style={styles.topBox}>
           <Text style={{color: "#717c82", fontSize: 18}}>les meilleurs films</Text>
@@ -497,10 +615,10 @@ const HomeScreen = ({ navigation }) => {
         {/* bande d'annonce end  */}
           <FlatList
             style={{marginBottom: 150}}
-            data={topBoxData}
+            data={AllCinema}
             numColumns={2}
-            keyExtractor={(item, index) => item.id}
-            renderItem={renderItemTopBox}
+            keyExtractor={(item, index) => item._id}
+            renderItem={renderItemsTest}
           />
         </View>
         </ScrollView>
@@ -517,9 +635,9 @@ const HomeScreen = ({ navigation }) => {
             />
         </View>
         <View style={{justifyContent: "center"}}>
-            <Text style={{color: "#fff"}}>Koffi Franck</Text>
-            <Text style={{color: "#fff"}}>Koffi@gmail.com</Text>
-            <Text style={{color: "#fff"}}>0102030405</Text>
+            <Text style={{color: "#fff"}}>{Data.user.prenom} {Data.user.nom}</Text>
+            <Text style={{color: "#fff"}}>{Data.user.email}</Text>
+            <Text style={{color: "#fff"}}>{Data.user.number}</Text>
         </View>
         <View style={{justifyContent: "center"}}>
             <Icon
@@ -535,7 +653,7 @@ const HomeScreen = ({ navigation }) => {
         <Text style={{color: "#fff", fontWeight: "bold", fontSize: 16}}>Personnel</Text>
       </View>
       {/* box 1 start */}
-      <TouchableOpacity style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
+      <TouchableOpacity onPress={() => navigation.navigate("MesTicketsCinema", { idUser: id })} style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
         <View style={{justifyContent: "center", margin: 10}}>
             <Icon
               size={25}
@@ -552,7 +670,7 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
       {/* box 1 end */}
       {/* box 2 start */}
-      <TouchableOpacity style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")} style={{backgroundColor: "#34424c", flexDirection: "row", margin: 10, borderRadius: 10, height: 70}}>
         <View style={{justifyContent: "center", margin: 10}}>
             <Icon
               size={25}
@@ -592,7 +710,7 @@ const HomeScreen = ({ navigation }) => {
             source={require("../../assets/logo-scan.png")}
           />
         </View>
-        <View style={styles.headerView}>
+        <TouchableOpacity onPress={() => navigation.navigate("MesTicketsCinema", { idUser: id })} style={styles.headerView}>
           <Icon
             style={{ alignSelf: "center" }}
             name="ticket-outline"
@@ -600,7 +718,7 @@ const HomeScreen = ({ navigation }) => {
             size={25}
             color={"#fff"}
           />
-        </View>
+        </TouchableOpacity>
       </View>
       {/* header end  */}
         <View style={{ height: windowHeight }}>

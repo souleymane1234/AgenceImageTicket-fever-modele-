@@ -12,7 +12,12 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-const DetailEvenement = () => {
+import OrientationLoadingOverlay from "react-native-orientation-loading-overlay";
+const DetailEvenement = ({route, navigation}) => {
+    const { DataEvent, idEvent, idUser } = route.params;
+    const [Prix, setPrix] = useState("0");
+    const [Spinner, setSpinner] = React.useState(false);
+    console.log("first", DataEvent)
   const dummyData = [
     'Item 1', 'Item 2', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1',
     'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1', 'Item 1',
@@ -33,36 +38,101 @@ const animateHeaderHeight = AnimatedHeaderValue.interpolate({
     extrapolate: 'clamp'
 });
 
+// creer ticket 
+
+  const sendData = () => {
+      var details = {
+        nom: DataEvent.nom,
+        image: DataEvent.image,
+        nomLieu: DataEvent.nomLieu,
+        date: DataEvent.date,
+        heure: DataEvent.heure,
+        description: DataEvent.description,
+        descriptionLieu: DataEvent.descriptionLieu,
+        prixStandart: Prix,
+        usersId: idUser,
+        eventId: idEvent,
+      };
+
+      var formBody = [];
+      for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
+      setSpinner(!Spinner);
+      fetch("https://pleasant-shirt-bass.cyclic.app/api/createTicket", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
+        body: formBody,
+      })
+  .then(response => response.json())
+  .then((result) => {
+          setSpinner(!Spinner);
+          if (result) {
+            setSpinner(false);
+            console.log('mon tik',result)
+            alert("Votre Achat a été effectué avec success");
+            navigation.navigate("MesTicketsCinema", {
+                    idUser: idUser
+                  })
+            setSpinner(false);
+          } else {
+            setSpinner(false);
+            alert("une erreur s'est produite ors de l'achat");
+          }
+          console.log("Patience");
+        })
+  .catch(error => {
+    setSpinner(false);
+    console.log('error', error)
+  });
+  }
+
+    const Loader = (
+    <OrientationLoadingOverlay
+      visible={Spinner}
+      color="white"
+      indicatorSize="large"
+      messageFontSize={10}
+      message="Connexion en cours"
+    />
+  );
+
+
   return (
     <SafeAreaView style={styles.container}>
-        <Animated.View 
-        style={[styles.header,{height: animateHeaderHeight, backgroundColor: animateHeaderBackgroundColor}]}>
-            <ImageBackground source={require("../../assets/imgConcert1.jpeg")} resizeMode="cover" style={styles.image}>
-                <View style={{margin: 10}}>
-                <Icon
-                    size={30}
-                    color="#fff"
-                    name="arrow-left"
-                    pack="material"
-                    style={{}}
-                    />
-                </View>
-                <View style={{alignSelf: "center", justifyContent: "flex-end", height: "70%"}}>
-                    <Text style={{color: "#fff", fontSize: 18, fontWeight: "bold"}}>Concert de Debordo leekunfa</Text>
-                </View>
-
-            </ImageBackground>
-        </Animated.View>
+      {Loader}
         <ScrollView 
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {y: AnimatedHeaderValue}}}],
-            {useNativeDriver: false}
-        )}
+        // scrollEventThrottle={16}
+        // onScroll={Animated.event(
+        //     [{nativeEvent: {contentOffset: {y: AnimatedHeaderValue}}}],
+        //     {useNativeDriver: false}
+        // )}
         >
+            <Animated.View style={[styles.header,{height: animateHeaderHeight, backgroundColor: animateHeaderBackgroundColor}]}>
+                <ImageBackground source={{ uri: DataEvent.image}} resizeMode="cover" style={styles.image}>
+                    <View style={{margin: 10}}>
+                    <Icon
+                        size={30}
+                        color="#fff"
+                        name="arrow-left"
+                        pack="material"
+                        style={{}}
+                        />
+                    </View>
+                    <View style={{alignSelf: "center", justifyContent: "flex-end", height: "70%"}}>
+                        <Text style={{color: "#fff", fontSize: 18, fontWeight: "bold"}}>{DataEvent.nom}</Text>
+                    </View>
+
+                </ImageBackground>
+            </Animated.View>
             <View style={{margin: 10}}>
                 <Text>
-                    Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page, le texte définitif venant remplacer le faux-texte dès qu'il est prêt ou que la mise en page est achevée. Généralement, on utilise un texte en faux latin, le Lorem ipsum ou Lipsum.
+                    {DataEvent.description}
                 </Text>
             </View>
             {/* billet entre  */}
@@ -74,8 +144,7 @@ const animateHeaderHeight = AnimatedHeaderValue.interpolate({
                             <Icon size={20} color="red" name="ticket-confirmation" pack="material" style={{}}/>
                             <Text style={{marginHorizontal: 10}}>entre standart</Text>
                         </View>
-                        <Text>- L'experience immersive au labo</Text>
-                        <Text>- L'experience immersive au labo</Text>
+                        <Text>- Vous avez droit a une place au concert</Text>
                     </View>
                 {/* Standard end  */}
                 {/* Vip start */}
@@ -84,8 +153,7 @@ const animateHeaderHeight = AnimatedHeaderValue.interpolate({
                             <Icon size={20} color="red" name="ticket-confirmation" pack="material" style={{}}/>
                             <Text style={{marginHorizontal: 10}}>entre VIP</Text>
                         </View>
-                        <Text>- L'experience immersive au labo</Text>
-                        <Text>- L'experience immersive au labo</Text>
+                        <Text>- Vous avez droit a une place au concert dans les premiers rang</Text>
                     </View>
                 {/* Vip end  */}
             </View>
@@ -93,11 +161,11 @@ const animateHeaderHeight = AnimatedHeaderValue.interpolate({
                 <Text style={{fontWeight: "bold"}}>Info</Text>
                 <View style={{flexDirection: "row"}}>
                     <Icon size={20} name="calendar-check-outline" pack="material" style={{}}/>
-                    <Text style={{marginHorizontal: 10}}>Date: mardi 20 mars 2023</Text>
+                    <Text style={{marginHorizontal: 10}}>{DataEvent.date}</Text>
                 </View>
                 <View style={{flexDirection: "row"}}>
                     <Icon size={20} name="clock-time-four-outline" pack="material" style={{}}/>
-                    <Text style={{marginHorizontal: 10}}>Heure: 20h00</Text>
+                    <Text style={{marginHorizontal: 10}}>Heure: {DataEvent.heure}</Text>
                 </View>
             </View>
             <View style={{flexDirection: "row", margin: 10, backgroundColor: "#e9e9e9", height: 50, justifyContent: "center", alignItems: "center", borderRadius: 5}}>
@@ -111,32 +179,32 @@ const animateHeaderHeight = AnimatedHeaderValue.interpolate({
                 />
             </View>
             <View style={{margin: 10}}>
-                <Text style={{fontWeight: "bold"}}>Bercy Paris France</Text>
+                <Text style={{fontWeight: "bold"}}>{DataEvent.nomLieu}</Text>
                 <Text>
-                    Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page, le texte définitif venant remplacer le faux-texte dès qu'il est prêt ou que la mise en page est achevée. Généralement, on utilise un texte en faux latin, le Lorem ipsum ou Lipsum.
+                    {DataEvent.descriptionLieu}
                 </Text>
             </View>
             <View style={{margin: 10}}>
                 {/* standart start  */}
                     <View style={{flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 3, borderBottomColor: "#e9e9e9", marginBottom: 20}}>
                         <Text style={{top: 5}}>Ticket standart</Text>
-                        <TouchableOpacity style={{backgroundColor: "#53c6ea", height: 30, width: 90, borderRadius: 5, justifyContent: "center"}}>
-                            <Text style={{textAlign: "center", color: "#fff", fontWeight: "bold"}}>2000 Fcfa</Text>
+                        <TouchableOpacity onPress={() => setPrix(DataEvent.prixStandart)} style={{backgroundColor: "#53c6ea", height: 30, width: 90, borderRadius: 5, justifyContent: "center"}}>
+                            <Text style={{textAlign: "center", color: "#fff", fontWeight: "bold"}}>{DataEvent.prixStandart} Fcfa</Text>
                         </TouchableOpacity>
                     </View>
                 {/* standart start  */}
                 {/* vip start  */}
                     <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                         <Text style={{top: 5}}>Ticket VIP</Text>
-                        <TouchableOpacity style={{backgroundColor: "#53c6ea", height: 30, width: 90, borderRadius: 5, justifyContent: "center"}}>
-                            <Text style={{textAlign: "center", color: "#fff", fontWeight: "bold"}}>5000 Fcfa</Text>
+                        <TouchableOpacity onPress={() => setPrix(DataEvent.prixVip)} style={{backgroundColor: "#53c6ea", height: 30, width: 90, borderRadius: 5, justifyContent: "center"}}>
+                            <Text style={{textAlign: "center", color: "#fff", fontWeight: "bold"}}>{DataEvent.prixVip} Fcfa</Text>
                         </TouchableOpacity>
                     </View>
                 {/* vip start  */}
             </View>
         </ScrollView>
-        <TouchableOpacity style={{backgroundColor: "#53c6ea", height: 50, justifyContent: "center"}}>
-            <Text style={{textAlign: "center", fontSize: 18, color: "#fff", fontWeight: "bold"}}>ACHETER - 5000 Fcfa</Text>
+        <TouchableOpacity onPress={() => sendData()} style={{backgroundColor: "#53c6ea", height: 50, justifyContent: "center"}}>
+            <Text style={{textAlign: "center", fontSize: 18, color: "#fff", fontWeight: "bold"}}>ACHETER - {Prix} Fcfa</Text>
         </TouchableOpacity>
     </SafeAreaView>
   );
